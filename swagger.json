@@ -1,0 +1,933 @@
+# To test with http://editor.swagger.io/
+openapi: 3.0.0
+info:
+  title: TrikTrak API
+  description: API Draft for TrikTrak
+  version: 0.1.1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    MissingParam:
+      description: A parameter is missing
+    NotFound:
+      description: Resource not found
+    BadRequest:
+      description: Bad request
+    UnauthorizedAccess:
+      description: User cannot access this resource
+  schemas:
+    Suggestion:
+      description: Suggestion schema
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID.
+        firstname:
+          type: string
+          description: User's firstname
+        age:
+          type: number
+          description: User's age
+        distance:
+          type: string
+          description: Distance from user
+        description:
+          type: string
+          description: User's description
+        #tools:
+        #  type: array
+        #  items:
+        #    $ref: '#/components/schemas/Tool'
+    Lair:
+      description: Suggestion schema
+      type: object
+      properties:
+        name:
+          type: string
+          description: Lair's name
+        picture:
+          type: string
+          description: Lair's picture
+        address:
+          type: string
+          description: Lair's address
+        type:
+          type: string
+          description: Lair's type (Bar, restaurant, etc)
+paths:
+  /auth:
+    post:
+      summary: Authentication with credentials
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                indicative:
+                  type: string
+                password:
+                  type: string
+              required:
+              - phone
+              - indicative
+              - password
+      responses:
+        '200':    # status code
+          description: User logged-in
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /auth/facebook:
+    post:
+      summary: Authentication with Facebook
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                facebook_token:
+                  type: string
+                facebook_id:
+                  type: string
+              required:
+              - facebook_token
+              - facebook_id
+      responses:
+        '200':    # status code
+          description: User logged-in
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /auth/accountkit:
+    post:
+      summary: Authentication with credentials
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+              - email
+      responses:
+        '200':    # status code
+          description: User logged-in
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /logout:
+    post:
+      summary: Log out.
+      tags:
+      - Auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Invalidate used access token
+  /session/status:
+    get:
+      summary: Get current session status
+      tags:
+      - Global
+      responses:
+        '200':    # status code
+          description: Current status
+  /updates:
+    get:
+      summary: Get all updates since the given date
+      security:
+      - bearerAuth: []
+      tags:
+      - Global
+      parameters:
+        - in: query
+          name: last_update_date
+          required: true
+          schema:
+            type: string
+          description: Last update date
+      responses:
+        '200':    # status code
+          description: Updates
+  /ping:
+    post:
+      summary: Update user's location. (Must be spoof proof)
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lat:
+                  type: string
+                long:
+                  type: string
+              required:
+              - long
+              - lat
+      responses:
+        '200':    # status code
+          description: Location updated
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /users/{id}:
+    get:
+      summary: Get user's profile data
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the user
+      responses:
+        '200':    # status code
+          description: Return user data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /profile:
+    get:
+      summary: Get my profile
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return my profile data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Update my profile
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fields:
+                  type: object
+                  properties:
+                    age_filter_min:
+                      type: number
+                      description: Minimum age for user's suggestions
+                    age_filter_max:
+                      type: number
+                      description: Maximum age for user's suggestions
+                    distance_filter:
+                      type: number
+                      description: Maximum distance for user's suggestions
+                    gender_filter:
+                      type: number
+                      description: Gender filter for user's suggestions
+              required:
+              - fields
+      responses:
+        '200':    # status code
+          description: Return my profile data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: Delete my profile
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      parameters:
+        - in: query
+          name: cause
+          required: true
+          schema:
+            type: integer
+          description: Deletion cause
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Extra info filled by the user
+      responses:
+        '200':    # status code
+          description: Return my profile data
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/nomenclature:
+    get:
+      summary: Get profile nomenclature (list of available fields)
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return all fields
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/visibility:
+    delete:
+      summary: Deactivate my profile
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      parameters:
+        - in: query
+          name: cause
+          required: true
+          schema:
+            type: integer
+          description: Deactivation cause
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: Extra info filled by the user
+      responses:
+        '200':    # status code
+          description: Account deactivated
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Re-activate my profile
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Profile re-activated
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/validation:
+    post:
+      summary: Upload a picture for the validation
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Review in progress
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/upload:
+    post:
+      summary: Upload a new picture
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return the new picture
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: Delete a picture
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return the new picture
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/pictures:
+    put:
+      summary: Set and update user pictures
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return user pictures
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/jobs:
+    put:
+      summary: Set and update user jobs
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return user jobs
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/studies:
+    put:
+      summary: Set and update user studies
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return user jobs
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/meta:
+    post:
+      summary: Get my meta data
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: My metadata
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/lairs:
+    put:
+      summary: Set and update user lairs
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return user lairs
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /profile/lairs/autocomplete:
+    get:
+      summary: Autocomplete lairs
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Lairs
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /live/messages:
+    post:
+      summary: Post a message during a live
+      tags:
+      - Live host
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Message content
+              required:
+              - message
+      responses:
+        '200':    # status code
+          description: Message submitted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /live/answers/{id}:
+    post:
+      summary: Answer a live question
+      tags:
+      - Live host
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Message content
+              required:
+              - message
+      responses:
+        '200':    # status code
+          description: Answer submitted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '410':
+          description: Question expired
+  /users/{id}/invite:
+    post:
+      summary: Send a macaroon to the user
+      tags:
+      - Macaroons
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invited user
+      responses:
+        '200':    # status code
+          description: User invited
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /users/{id}/skip:
+    post:
+      summary: Skip a user suggested
+      tags:
+      - Macaroons
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invited user
+      responses:
+        '200':    # status code
+          description: Suggestion skipped
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /invites/{id}:
+    post:
+      summary: Accept a macaroons
+      tags:
+      - Macaroons
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invited user
+      responses:
+        '200':    # status code
+          description: Invitation accepted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Refuse a macaroons
+      tags:
+      - Macaroons
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invited user
+      responses:
+        '200':    # status code
+          description: Invitation refused
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /suggestions:
+    get:
+      summary: Get user suggestions
+      tags:
+      - Macaroons
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: User latest suggestions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Suggestion'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /conversations/{id}:
+    get:
+      summary: Get a conversation
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      responses:
+        '200':    # status code
+          description: Conversation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    post:
+      summary: Send a message to a conversation
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Message content
+              required:
+              - message
+      responses:
+        '200':    # status code
+          description: Message sent
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /conversations/{id}/games:
+    post:
+      summary: Send a shuffle to a conversation
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      responses:
+        '200':    # status code
+          description: Shuffle game created
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /conversations/{id}/games/{gameId}:
+    post:
+      summary: Answer a game
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      - in: path
+        name: gameId
+        schema:
+          type: string
+        required: true
+        description: ID of the game
+      responses:
+        '200':    # status code
+          description: Game answered
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /favorites:
+    get:
+      summary: Get user available favorites (profiles)
+      tags:
+      - Selections
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Profiles availables organized in round, and number of selection available
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /favorites/{id}:
+    post:
+      summary: Post user final selection
+      tags:
+      - Selections
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the favorite user
+      responses:
+        '200':    # status code
+          description: User and remaining favorite (for extra selection)
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /reports/{id}:
+    post:
+      summary: Report a user
+      tags:
+      - Moderation
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cause:
+                  type: string
+                  description: Report cause
+                text:
+                  type: string
+                  description: Extra info filled by the user
+              required:
+              - cause
+      responses:
+        '200':    # status code
+          description: User reported
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Un-report a user
+      tags:
+      - Moderation
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the user
+      responses:
+        '200':    # status code
+          description: User un-reported
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /blocks/{id}:
+    post:
+      summary: Block a user
+      tags:
+      - Moderation
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cause:
+                  type: string
+                  description: Block cause
+                text:
+                  type: string
+                  description: Extra info filled by the user
+              required:
+              - cause
+      responses:
+        '200':    # status code
+          description: User blocked
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Un-block a user
+      tags:
+      - Moderation
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the user
+      responses:
+        '200':    # status code
+          description: User un-blocked
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /spotify/authorize:
+    post:
+      summary: Link Spotify account
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: TODO
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Un-link Spotify account
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: User un-blocked
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /instagram/authorize:
+    post:
+      summary: Link Instagram account
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: TODO
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Un-link Instagram account
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: User un-blocked
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+  /stats/events:
+    post:
+      summary: Post an event for stats purpose
+      tags:
+      - Stats
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: TODO
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
