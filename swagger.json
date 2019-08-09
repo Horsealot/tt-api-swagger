@@ -4,63 +4,6 @@ info:
   title: TrikTrak API
   description: API Draft for TrikTrak
   version: 0.1.1
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
-    MissingParam:
-      description: A parameter is missing
-    NotFound:
-      description: Resource not found
-    BadRequest:
-      description: Bad request
-    UnauthorizedAccess:
-      description: User cannot access this resource
-  schemas:
-    Suggestion:
-      description: Suggestion schema
-      type: object
-      properties:
-        id:
-          type: integer
-          description: User ID.
-        firstname:
-          type: string
-          description: User's firstname
-        age:
-          type: number
-          description: User's age
-        distance:
-          type: string
-          description: Distance from user
-        description:
-          type: string
-          description: User's description
-        #tools:
-        #  type: array
-        #  items:
-        #    $ref: '#/components/schemas/Tool'
-    Lair:
-      description: Suggestion schema
-      type: object
-      properties:
-        name:
-          type: string
-          description: Lair's name
-        picture:
-          type: string
-          description: Lair's picture
-        address:
-          type: string
-          description: Lair's address
-        type:
-          type: string
-          description: Lair's type (Bar, restaurant, etc)
 paths:
   /auth:
     post:
@@ -129,13 +72,49 @@ paths:
             schema:
               type: object
               properties:
-                email:
-                  type: string
+                phone:
+                  type: integer
+                phoneIndicative:
+                  type: integer
               required:
-              - email
+              - phone
+              - phoneIndicative
+      responses:
+        '200':    # status code
+          description: Code sent
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/MissingParam'
+  /auth/accountkit/code:
+    post:
+      summary: Authentication with credentials
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: integer
+                phoneIndicative:
+                  type: integer
+                code:
+                  type: integer
+              required:
+              - phone
+              - phoneIndicative
+              - code
       responses:
         '200':    # status code
           description: User logged-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '422':
@@ -150,14 +129,18 @@ paths:
       responses:
         '200':    # status code
           description: Invalidate used access token
-  /session/status:
+  /session:
     get:
-      summary: Get current session status
+      summary: Get session status
       tags:
       - Global
       responses:
         '200':    # status code
           description: Current status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionStatus"
   /updates:
     get:
       summary: Get all updates since the given date
@@ -612,7 +595,7 @@ paths:
                   suggestions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Suggestion'
+                      $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -931,3 +914,384 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    MissingParam:
+      description: A parameter is missing
+    NotFound:
+      description: Resource not found
+    BadRequest:
+      description: Bad request
+    UnauthorizedAccess:
+      description: User cannot access this resource
+  schemas:
+    Profile:
+      description: User's profile
+      type: object
+      properties:
+        id:
+          type: string
+        active:
+          type: boolean
+        firstname:
+          type: string
+        lastname:
+          type: string
+        created_at:
+          type: integer
+        last_updated_at:
+          type: integer
+        phone:
+          type: integer
+        phone_indicative:
+          type: integer
+        height:
+          type: integer
+        email:
+          type: string
+        date_of_birth:
+          type: integer
+        min_age:
+          type: integer
+        max_age:
+          type: integer
+        max_distance:
+          type: integer
+        bio:
+          type: string
+        country_code:
+          type: string
+        gender:
+          type: integer
+        physical_activity:
+          type: integer
+        astrological_sign:
+          type: integer
+        alcohol_habits:
+          type: integer
+        smoking_habits:
+          type: integer
+        kids_expectation:
+          type: integer
+        religion:
+          type: integer
+        political_affiliation:
+          type: integer
+        locale:
+          type: string
+        pictures:
+          type: array
+          items:
+           allOf:
+            - $ref: '#/components/schemas/Picture'
+            - type: object
+              properties:
+                isMain:
+                  type: boolean
+        jobs:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              company:
+                type: string
+              start_date:
+                type: integer
+              last_date:
+                type: integer
+              isMain:
+                type: boolean
+        studies:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              institution:
+                type: string
+              graduation_date:
+                type: integer
+              isMain:
+                type: boolean
+        lairs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              picture:
+                $ref: '#/components/schemas/Picture'
+              type:
+                type: string
+      example:
+        id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+        active: true
+        firstname: "John"
+        lastname: "Doe"
+        created_at: 1565337124
+        last_updated_at: 1565337124
+        phone: "629292929"
+        phone_indicative: "33"
+        height: 190
+        email: "john.doe@triktrak.co"
+        bio: "Hi I'm John, 22 years old from NY"
+        date_of_birth: 1565337124
+        min_age: 18
+        max_age: 30
+        max_distance: 100
+        country_code: 12
+        gender: 1
+        physical_activity: 2
+        astrological_sign: 1
+        alcohol_habits: 1
+        smoking_habits: 1
+        kids_expectation: 1
+        religion: 1
+        political_affiliation: 1
+        locale: "fr"
+        pictures:
+          - source: "http://images.triktrak.co/d0aads-sfea.jpg"
+            name: "d0aads-sfea.jpg"
+            isMain: true
+            derivatives:
+              - height: 40
+                width: 40
+                url: "http://images.triktrak.co/40x40_d0aads-sfea.jpg"
+              - height: 80
+                width: 80
+                url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
+          - source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+            name: "sdq00dsqsdq-ccxcaa.jpg"
+            isMain: false
+            derivatives:
+              - height: 40
+                width: 40
+                url: "http://images.triktrak.co/40x40_sdq00dsqsdq-ccxcaa.jpg"
+              - height: 80
+                width: 80
+                url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
+        jobs:
+          - title: "Software engineer"
+            company: "Trik Trak"
+            start_date: 1565337124
+            end_date: 1565337124
+            isMain: true
+          - title: "Software intern"
+            company: "Criteo"
+            start_date: 1565337124
+            end_date: 1565337124
+            isMain: false
+        studies:
+          - title: "Engineer"
+            institution: "ENSAM"
+            graduation_date: 1565337124
+            isMain: true
+        lairs:
+          - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+            name: "Burger King"
+            picture: 
+              source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+              name: "sdq00dsqsdq-ccxcaa.jpg"
+              derivatives:
+                - height: 40
+                  width: 40
+                  url: "http://images.triktrak.co/40x40_sdq00dsqsdq-ccxcaa.jpg"
+                - height: 80
+                  width: 80
+                  url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
+            type: 1
+    User:
+      description: A user
+      type: object
+      properties:
+        id:
+          type: string
+        firstname:
+          type: string
+        height:
+          type: integer
+        distance:
+          type: integer
+        years_old:
+          type: integer
+        bio:
+          type: string
+        gender:
+          type: integer
+        physical_activity:
+          type: integer
+        astrological_sign:
+          type: integer
+        alcohol_habits:
+          type: integer
+        smoking_habits:
+          type: integer
+        kids_expectation:
+          type: integer
+        religion:
+          type: integer
+        political_affiliation:
+          type: integer
+        pictures:
+          type: array
+          items:
+           allOf:
+            - $ref: '#/components/schemas/Picture'
+            - type: object
+              properties:
+                isMain:
+                  type: boolean
+        job:
+          type: object
+          properties:
+            title:
+              type: string
+            company:
+              type: string
+            start_date:
+              type: integer
+            last_date:
+              type: integer
+        studies:
+          type: object
+          properties:
+            title:
+              type: string
+            institution:
+              type: string
+            graduation_date:
+              type: integer
+        lairs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              picture:
+                $ref: '#/components/schemas/Picture'
+              type:
+                type: string
+      example:
+        id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+        firstname: "John"
+        height: 190
+        age: 23
+        distance: 2
+        max_age: 30
+        max_distance: 100
+        bio: "Hi I'm John, 22 years old from NY"
+        gender: 1
+        physical_activity: 2
+        astrological_sign: 1
+        alcohol_habits: 1
+        smoking_habits: 1
+        kids_expectation: 1
+        religion: 1
+        political_affiliation: 1
+        pictures:
+          - source: "http://images.triktrak.co/d0aads-sfea.jpg"
+            name: "d0aads-sfea.jpg"
+            isMain: true
+            derivatives:
+              - height: 40
+                width: 40
+                url: "http://images.triktrak.co/40x40_d0aads-sfea.jpg"
+              - height: 80
+                width: 80
+                url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
+          - source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+            name: "sdq00dsqsdq-ccxcaa.jpg"
+            isMain: false
+            derivatives:
+              - height: 40
+                width: 40
+                url: "http://images.triktrak.co/40x40_sdq00dsqsdq-ccxcaa.jpg"
+              - height: 80
+                width: 80
+                url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
+        jobs:
+          title: "Software engineer"
+          company: "Trik Trak"
+          start_date: 1565337124
+          end_date: 1565337124
+        studies:
+          title: "Engineer"
+          institution: "ENSAM"
+          graduation_date: 1565337124
+        lairs:
+          - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+            name: "Burger King"
+            picture: 
+              source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+              name: "sdq00dsqsdq-ccxcaa.jpg"
+              derivatives:
+                - height: 40
+                  width: 40
+                  url: "http://images.triktrak.co/40x40_sdq00dsqsdq-ccxcaa.jpg"
+                - height: 80
+                  width: 80
+                  url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
+            type: 1
+    SessionStatus:
+      description: Session status
+      type: object
+      properties:
+        expectingPreviousSelection:
+          description: "True if the user must do his previous selection"
+          type: boolean
+        inProgress:
+          type: boolean
+        start_date:
+          type: integer
+        end_date:
+          type: integer
+      example:
+        expectingPreviousSelection: false
+        inProgress: true
+        start_date: 1565337124
+        end_date: 1565337124
+    Picture:
+      description: An image resource
+      type: object
+      properties:
+        source:
+          type: string
+        name:
+          type: string
+        derivatives:
+          type: array
+          items:
+            type: object
+            properties:
+              height:
+                type: integer
+              width:
+                type: integer
+              url:
+                type: string
+      example:
+        source: "http://images.triktrak.co/d0aads-sfea.jpg"
+        name: "d0aads-sfea.jpg"
+        derivatives:
+            - height: 40
+              width: 40
+              url: "http://images.triktrak.co/40x40_d0aads-sfea.jpg"
+            - height: 80
+              width: 80
+              url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
