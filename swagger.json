@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: TrikTrak API
   description: API Draft for TrikTrak
-  version: 0.1.1
+  version: 0.0.1
 paths:
   /auth:
     post:
@@ -158,6 +158,27 @@ paths:
       responses:
         '200':    # status code
           description: Updates
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Favorite'
+                  expired:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Expired'
+                  invites:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Invite'
+                  announcements:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Announcement'
   /ping:
     post:
       summary: Update user's location. (Must be spoof proof)
@@ -379,6 +400,18 @@ paths:
           description: Picture deleted
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+  /profile/details:
+    put:
+      summary: Update user
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Return user
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
   /profile/pictures:
     put:
       summary: Set and update user pictures
@@ -495,7 +528,7 @@ paths:
           description: Message submitted
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-  /live/answers/{id}:
+  /live/questions/{id}:
     post:
       summary: Answer a live question
       tags:
@@ -688,8 +721,28 @@ paths:
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
   /conversations/{id}/games:
+    get:
+      summary: Get a shuffle game
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      responses:
+        '200':    # status code
+          description: A Shuffle game proposition
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
     post:
-      summary: Send a shuffle to a conversation
+      summary: Post the proposed shuffle game
       tags:
       - Messenger
       security:
@@ -704,6 +757,26 @@ paths:
       responses:
         '200':    # status code
           description: Shuffle game created
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
+    delete:
+      summary: Refuse the proposed shuffle game
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      responses:
+        '200':    # status code
+          description: Shuffle game refused
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -737,7 +810,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedAccess'
   /favorites:
     get:
-      summary: Get user available favorites (profiles)
+      summary: Get user available favorites (profiles) organized in rounds
       tags:
       - Selections
       security:
@@ -1332,3 +1405,190 @@ components:
             - height: 80
               width: 80
               url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
+    Announcement:
+      description: Any form of announcement to the user (ex new favorite)
+      type: object
+      properties:
+        type:
+          type: string
+        key:
+          type: string
+        content:
+          type: string
+        acknowledgementUrl:
+          type: string
+      example:
+        type: 'new_favorite'
+        key: ''
+        content: Congrats you've won a new favorite for tonight show
+        acknowledgementUrl: https://api.triktrak.co/announcements/339ed2e3-70cf-4a81-8db8-e95a9251155d
+    Invite:
+      description: An invite
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        sent_at:
+          type: integer
+      example:
+        sent_at: 1565337124
+        user:
+          id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+          firstname: "John"
+          height: 190
+          age: 23
+          distance: 2
+          max_age: 30
+          max_distance: 100
+          bio: "Hi I'm John, 22 years old from NY"
+          gender: 1
+          physical_activity: 2
+          astrological_sign: 1
+          alcohol_habits: 1
+          smoking_habits: 1
+          kids_expectation: 1
+          religion: 1
+          political_affiliation: 1
+          pictures:
+            - source: "http://images.triktrak.co/d0aads-sfea.jpg"
+              name: "d0aads-sfea.jpg"
+              isMain: true
+              derivatives:
+                - height: 40
+                  width: 40
+                  url: "http://images.triktrak.co/40x40_d0aads-sfea.jpg"
+                - height: 80
+                  width: 80
+                  url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
+          jobs:
+            title: "Software engineer"
+            company: "Trik Trak"
+            start_date: 1565337124
+            end_date: 1565337124
+          studies:
+            title: "Engineer"
+            institution: "ENSAM"
+            graduation_date: 1565337124
+          lairs:
+            - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+              name: "Burger King"
+              picture: 
+                source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+                name: "sdq00dsqsdq-ccxcaa.jpg"
+                derivatives:
+                  - height: 40
+                    width: 40
+                    url: "http://images.triktrak.co/40x40_sdq00dsqsdq-ccxcaa.jpg"
+                  - height: 80
+                    width: 80
+                    url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
+              type: 1
+    Expired:
+      type: object
+      properties:
+        firstname:
+          type: string
+        date_of_invite:
+          type: string
+        picture:
+          $ref: '#/components/schemas/Picture'
+      example:
+        firstname: 'Beatrice'
+        date_of_invite: "2019-01-01T08:00:00.000Z"
+        picture:
+          source: "http://images.triktrak.co/d0aads-sfea.jpg"
+          name: "d0aads-sfea.jpg"
+          derivatives:
+            - height: 40
+              width: 40
+              url: "http://images.triktrak.co/40x40_d0aads-sfea.jpg"
+            - height: 80
+              width: 80
+              url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+        favorite:
+          type: string
+        timestamp:
+          type: integer
+        type:
+          $ref: '#/components/schemas/MessageType'
+        message:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        attachment:
+          type: string
+        game:
+          $ref: '#/components/schemas/ShuffleGame'
+      example:
+        id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+        created_at: "2019-01-01T08:00:00.000Z"
+        timestamp: 1565337124
+        favorite: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+        type: 1
+        message: "John sent you a macaroon"
+        from: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
+        to: "e95a9251155d-8db8-70cf-4a81-339ed2e3"
+    MessageType:
+      type: integer
+      enum: [1, 2, 3, 4]
+      description: > 
+        type: 
+          * `1` - Notification
+          * `2` - Text
+          * `3` - Game
+          * `4` - Attachment
+    ShuffleGame:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+        type:
+          $ref: '#/components/schemas/ShuffleGameType'
+        title:
+          type: string
+        isAnswered:
+          type: boolean
+        answer:
+          type: string
+      example:
+        id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+        created_at: 1565337124
+        type: 1
+        title: "Which food do you prefer?"
+        isAnswer: true
+        answer: "burger"
+    ShuffleGameType:
+      type: integer
+      enum: [1, 2, 3, 4]
+      description: > 
+        type: 
+          * `1` - Rating
+          * `2` - Open question
+          * `3` - 2-choices
+          * `4` - n-choices
+    Favorite:
+      type: object
+      properties:
+        isTemporary:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+        isRead:
+          type: boolean
+        nbOfUnread:
+          type: integer
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
