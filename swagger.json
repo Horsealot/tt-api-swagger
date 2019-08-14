@@ -30,6 +30,10 @@ paths:
       responses:
         '200':    # status code
           description: User logged-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '422':
@@ -56,6 +60,10 @@ paths:
       responses:
         '200':    # status code
           description: User logged-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '422':
@@ -70,15 +78,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                phone:
-                  type: integer
-                phoneIndicative:
-                  type: integer
-              required:
-              - phone
-              - phoneIndicative
+              $ref: '#/components/schemas/PhoneRequest'
       responses:
         '200':    # status code
           description: Code sent
@@ -99,7 +99,7 @@ paths:
               type: object
               properties:
                 phone:
-                  type: integer
+                  type: string
                 phoneIndicative:
                   type: integer
                 code:
@@ -155,6 +155,7 @@ paths:
           schema:
             type: string
           description: Last update date
+          example: "2019-01-01T08:00:00.000Z"
       responses:
         '200':    # status code
           description: Updates
@@ -179,6 +180,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Announcement'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
   /ping:
     post:
       summary: Update user's location. (Must be spoof proof)
@@ -200,6 +203,9 @@ paths:
               required:
               - long
               - lat
+            example:
+              long: 2.349014
+              lat: 48.864716
       responses:
         '200':    # status code
           description: Location updated
@@ -209,9 +215,11 @@ paths:
           $ref: '#/components/responses/UnauthorizedAccess'
         '422':
           $ref: '#/components/responses/MissingParam'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /users/{id}:
     get:
-      summary: Get user's profile data
+      summary: Get user's profile data when user are connected or favorited
       tags:
       - Users
       security:
@@ -400,18 +408,6 @@ paths:
           description: Picture deleted
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-  /profile/details:
-    put:
-      summary: Update user
-      tags:
-      - My profile
-      security:
-      - bearerAuth: []
-      responses:
-        '200':    # status code
-          description: Return user
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
   /profile/pictures:
     put:
       summary: Set and update user pictures
@@ -419,6 +415,20 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pictures:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
       responses:
         '200':    # status code
           description: Return user pictures
@@ -430,6 +440,99 @@ paths:
                   $ref: '#/components/schemas/Picture'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+  /profile/details:
+    put:
+      summary: Update user
+      tags:
+      - My profile
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    firstname:
+                      type: string
+                - type: object
+                  properties:
+                    lastname:
+                      type: string
+                - type: object
+                  properties:
+                    height:
+                      type: integer
+                - type: object
+                  properties:
+                    email:
+                      type: string
+                - type: object
+                  properties:
+                    date_of_birth:
+                      type: integer
+                - type: object
+                  properties:
+                    bio:
+                      type: string
+                - type: object
+                  properties:
+                    country_code:
+                      type: string
+                - type: object
+                  properties:
+                    physical_activity:
+                      $ref: '#/components/schemas/PhysicalActivityType'
+                - type: object
+                  properties:
+                    astrological_sign:
+                      $ref: '#/components/schemas/AstrologicalSignType'
+                - type: object
+                  properties:
+                    alcohol_habits:
+                      $ref: '#/components/schemas/AlcoholHabitsType'
+                - type: object
+                  properties:
+                    smoking_habits:
+                      $ref: '#/components/schemas/SmokingHabitsType'
+                - type: object
+                  properties:
+                    kids_expectation:
+                      $ref: '#/components/schemas/KidsExpectationType'
+                - type: object
+                  properties:
+                    religion:
+                      $ref: '#/components/schemas/ReligionType'
+                - type: object
+                  properties:
+                    political_affiliation:
+                      $ref: '#/components/schemas/PoliticalAffiliationType'
+                - type: object
+                  properties:
+                    locale:
+                      type: string
+            example:
+              firstname: "John"
+              lastname: "Doe"
+              height: 190
+              email: "john.doe@gmail.com"
+              date_of_birth: "2019-01-01"
+              bio: "Hi every one"
+              physical_activity: 1
+              astrological_sign: 1
+              alcohol_habits: 1
+              smoking_habits: 1
+              kids_expectation: 1
+              religion: 1
+              political_affiliation: 1
+              locale: "fr"
+      responses:
+        '200':    # status code
+          description: Return user
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
   /profile/jobs:
     put:
       summary: Set and update user jobs
@@ -437,9 +540,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Job'
       responses:
         '200':    # status code
-          description: Return user jobs
+          description: User's jobs updated
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /profile/studies:
@@ -449,9 +560,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/School'
       responses:
         '200':    # status code
-          description: Return user jobs
+          description: User studies updated
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /profile/meta:
@@ -1038,7 +1157,22 @@ components:
       description: Bad request
     UnauthorizedAccess:
       description: User cannot access this resource
+    TooManyRequests:
+      description: User sent too many requests
   schemas:
+    PhoneRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        phoneIndicative:
+          type: integer
+      required:
+      - phone
+      - phoneIndicative
+      example:
+        phone: 629490000
+        phoneIndicative: 33
     Profile:
       description: User's profile
       type: object
@@ -1092,44 +1226,34 @@ components:
         political_affiliation:
           type: integer
         locale:
-          type: string
+          $ref: '#/components/schemas/LocaleType'
         pictures:
           type: array
           items:
-           allOf:
-            - $ref: '#/components/schemas/Picture'
-            - type: object
-              properties:
-                isMain:
-                  type: boolean
+            allOf:
+              - $ref: '#/components/schemas/Picture'
+              - type: object
+                properties:
+                  isMain:
+                    type: boolean
         jobs:
           type: array
           items:
-            type: object
-            properties:
-              title:
-                type: string
-              company:
-                type: string
-              start_date:
-                type: integer
-              last_date:
-                type: integer
-              isMain:
-                type: boolean
+            allOf:
+              - $ref: '#/components/schemas/Job'
+              - type: object
+                properties:
+                  isMain:
+                    type: boolean
         studies:
           type: array
           items:
-            type: object
-            properties:
-              title:
-                type: string
-              institution:
-                type: string
-              graduation_date:
-                type: integer
-              isMain:
-                type: boolean
+            allOf:
+              - $ref: '#/components/schemas/School'
+              - type: object
+                properties:
+                  isMain:
+                    type: boolean
         lairs:
           type: array
           items:
@@ -1262,25 +1386,9 @@ components:
                 isMain:
                   type: boolean
         job:
-          type: object
-          properties:
-            title:
-              type: string
-            company:
-              type: string
-            start_date:
-              type: integer
-            last_date:
-              type: integer
+          $ref: '#/components/schemas/Job'
         studies:
-          type: object
-          properties:
-            title:
-              type: string
-            institution:
-              type: string
-            graduation_date:
-              type: integer
+          $ref: '#/components/schemas/School'
         lairs:
           type: array
           items:
@@ -1346,6 +1454,38 @@ components:
                   width: 80
                   url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
             type: 1
+    School:
+      description: User's studies
+      type: object
+      properties:
+        title:
+          type: string
+        institution:
+          type: string
+        graduation_date:
+          type: integer
+      example:
+        title: "Engineer"
+        institution: "ENSAM"
+        graduation_date: 1565337124
+    Job:
+      description: User's job
+      type: object
+      properties:
+        title:
+          type: string
+        company:
+          type: string
+        start_date:
+          type: integer
+        last_date:
+          type: integer
+      example:
+        title: "Software engineer"
+        company: "Trik Trak"
+        start_date: 1565337124
+        end_date: 1565337124
+                
     Lair:
       description: User's lair
       type: object
@@ -1592,3 +1732,82 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Message'
+    PhysicalActivityType:
+      type: integer
+      enum: [1, 2, 3]
+      description: > 
+        type: 
+          * `1` - Active
+          * `2` - Sometimes
+          * `3` - Almost never
+    AstrologicalSignType:
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      description: > 
+        type: 
+          * `1` - Aquarius
+          * `2` - Pisces
+          * `3` - Aries
+          * `4` - Taurus
+          * `5` - Gemini
+          * `6` - Cancer
+          * `7` - Leo
+          * `8` - Virgo
+          * `9` - Libra
+          * `10` - Scorpio
+          * `11` - Sagittarius
+          * `12` - Capricorn
+    AlcoholHabitsType:
+      type: integer
+      enum: [1, 2, 3]
+      description: > 
+        type: 
+          * `1` - Socially
+          * `2` - Never
+          * `3` - Regularly
+    SmokingHabitsType:
+      type: integer
+      enum: [1, 2, 3]
+      description: > 
+        type: 
+          * `1` - Socially
+          * `2` - Never
+          * `3` - Regularly
+    KidsExpectationType:
+      type: integer
+      enum: [1, 2, 3, 4]
+      description: > 
+        type: 
+          * `1` - Want someday
+          * `2` - Don't want
+          * `3` - Have & want more
+          * `4` - Have & don't want more
+    ReligionType:
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      description: > 
+        type: 
+          * `1` - Agnostic
+          * `2` - Atheist
+          * `3` - Buddhist
+          * `4` - Christian
+          * `5` - Hindu
+          * `6` - Jain
+          * `7` - Jewish
+          * `8` - Muslim
+          * `9` - Parsi
+          * `10` - Sikh
+          * `11` - Spiritual
+          * `12` - Other
+    PoliticalAffiliationType:
+      type: integer
+      enum: [1, 2, 3, 4]
+      description: > 
+        type: 
+          * `1` - Apolitical
+          * `2` - Moderate
+          * `3` - Liberal
+          * `4` - Conservative
+    LocaleType:
+      type: string
+      enum: ["fr", "en"]
