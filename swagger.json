@@ -817,7 +817,13 @@ paths:
         description: ID of the conversation
       responses:
         '200':    # status code
-          description: Conversation
+          description: Conversation's messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -871,6 +877,10 @@ paths:
       responses:
         '200':    # status code
           description: A Shuffle game proposition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShuffleGame'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -952,6 +962,10 @@ paths:
       responses:
         '200':    # status code
           description: Profiles availables organized in round, and number of selection available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorites'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /favorites/{id}:
@@ -1751,6 +1765,19 @@ components:
         title: "Which food do you prefer?"
         isAnswer: true
         answer: "burger"
+    Favorites:
+      type: array
+      items:
+        $ref: '#/components/schemas/Round'
+    Round:
+      type: object
+      properties:
+        roundNumber:
+          type: number
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     ShuffleGameType:
       type: integer
       enum: [1, 2, 3, 4]
