@@ -10,6 +10,17 @@ paths:
       summary: Authentication with credentials
       tags:
       - Auth
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -43,6 +54,17 @@ paths:
       summary: Authentication with Facebook
       tags:
       - Auth
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -73,6 +95,17 @@ paths:
       summary: Request an authentication code
       tags:
       - Auth
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -91,6 +124,17 @@ paths:
       summary: Authenticate with phone and authentication code
       tags:
       - Auth
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -126,6 +170,17 @@ paths:
       - Auth
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Invalidate used access token
@@ -134,6 +189,17 @@ paths:
       summary: Get session status
       tags:
       - Global
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Current status
@@ -149,13 +215,23 @@ paths:
       tags:
       - Global
       parameters:
-        - in: query
-          name: last_update_date
-          required: true
-          schema:
-            type: string
-          description: Last update date
-          example: "2019-01-01T08:00:00.000Z"
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
+      - in: query
+        name: last_update_date
+        required: true
+        schema:
+          type: string
+        description: Last update date
+        example: "2019-01-01T08:00:00.000Z"
       responses:
         '200':    # status code
           description: Updates
@@ -189,6 +265,17 @@ paths:
       - Users
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -225,6 +312,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -251,6 +348,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Return my profile data
@@ -266,6 +374,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -306,17 +425,27 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-        - in: query
-          name: cause
-          required: true
-          schema:
-            type: integer
-          description: Deletion cause
-        - in: query
-          name: text
-          schema:
-            type: string
-          description: Extra info filled by the user
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
+      - in: query
+        name: cause
+        required: true
+        schema:
+          type: integer
+        description: Deletion cause
+      - in: query
+        name: text
+        schema:
+          type: string
+        description: Extra info filled by the user
       responses:
         '200':    # status code
           description: User deleted
@@ -329,6 +458,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Return all fields
@@ -342,17 +482,27 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-        - in: query
-          name: cause
-          required: true
-          schema:
-            type: integer
-          description: Deactivation cause
-        - in: query
-          name: text
-          schema:
-            type: string
-          description: Extra info filled by the user
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
+      - in: query
+        name: cause
+        required: true
+        schema:
+          type: integer
+        description: Deactivation cause
+      - in: query
+        name: text
+        schema:
+          type: string
+        description: Extra info filled by the user
       responses:
         '200':    # status code
           description: Account deactivated
@@ -364,6 +514,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Profile re-activated
@@ -376,6 +537,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Review in progress
@@ -388,6 +560,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Return the new picture
@@ -403,6 +586,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Picture deleted
@@ -415,6 +609,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -447,6 +652,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -540,6 +756,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -560,6 +787,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -580,6 +818,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: My metadata
@@ -592,6 +841,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -619,12 +879,22 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-        - in: path
-          name: query
-          schema:
-            type: string
-          required: true
-          description: Query search
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
+      - in: path
+        name: query
+        schema:
+          type: string
+        required: true
+        description: Query search
       responses:
         '200':    # status code
           description: Lairs
@@ -645,6 +915,17 @@ paths:
       - Live host
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -670,6 +951,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -703,6 +994,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -724,6 +1025,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -745,6 +1056,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -765,6 +1086,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -785,6 +1116,17 @@ paths:
       - Macaroons
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: User latest suggestions
@@ -809,6 +1151,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -835,6 +1187,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -868,6 +1230,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -892,6 +1264,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -912,6 +1294,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -933,6 +1325,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -959,6 +1361,17 @@ paths:
       - Selections
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Profiles availables organized in round, and number of selection available
@@ -976,6 +1389,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -997,6 +1420,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -1032,6 +1465,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -1053,6 +1496,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -1088,6 +1541,16 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       - in: path
         name: id
         schema:
@@ -1108,6 +1571,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -1135,6 +1609,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Account unlinked
@@ -1149,6 +1634,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       requestBody:
         required: true
         content:
@@ -1176,6 +1672,17 @@ paths:
       - My profile
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':    # status code
           description: Account unlinked
@@ -1190,6 +1697,17 @@ paths:
       - Stats
       security:
       - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
       responses:
         '200':
           description: TODO
@@ -1198,6 +1716,15 @@ paths:
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
 components:
+  headers:
+    ClientVersion:
+      schema:
+        type: integer
+        description: Client version
+    OsVersion:
+      schema:
+        type: string
+        description: OS version
   securitySchemes:
     bearerAuth:
       type: http
