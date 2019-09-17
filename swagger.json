@@ -1891,6 +1891,8 @@ components:
                 $ref: '#/components/schemas/Picture'
               type:
                 type: string
+        filters:
+          $ref: '#/components/schemas/FiltersType'
       example:
         id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
         active: true
@@ -1968,6 +1970,11 @@ components:
                   width: 80
                   url: "http://images.triktrak.co/80x80_sdq00dsqsdq-ccxcaa.jpg"
             type: 1
+        filters:
+          min_age: 23
+          max_age: 35
+          max_distance: 100
+          gender: "M"
     User:
       description: A user
       type: object
@@ -2448,3 +2455,20 @@ components:
     LocaleType:
       type: string
       enum: ["fr", "en"]
+    FiltersType:
+      type: object
+      properties:
+        min_age:
+          type: integer
+        max_age:
+          type: integer
+        max_distance:
+          type: integer
+        gender:
+          type: string
+          enum: ["M", "F", "B"]
+      example:
+        min_age: 23
+        max_age: 35
+        max_distance: 100
+        gender: "M"
