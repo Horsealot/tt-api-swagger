@@ -1791,25 +1791,13 @@ components:
           type: string
         lastname:
           type: string
-        created_at:
-          type: integer
-        last_updated_at:
-          type: integer
         phone:
-          type: integer
-        phone_indicative:
           type: integer
         height:
           type: integer
         email:
           type: string
         date_of_birth:
-          type: integer
-        min_age:
-          type: integer
-        max_age:
-          type: integer
-        max_distance:
           type: integer
         bio:
           type: string
@@ -1880,17 +1868,12 @@ components:
         active: true
         firstname: "John"
         lastname: "Doe"
-        created_at: 1565337124
-        last_updated_at: 1565337124
         phone: "629292929"
         phone_indicative: "33"
         height: 190
         email: "john.doe@triktrak.co"
         bio: "Hi I'm John, 22 years old from NY"
-        date_of_birth: 1565337124
-        min_age: 18
-        max_age: 30
-        max_distance: 100
+        date_of_birth: "2019-01-01T08:00:00.000Z"
         country_code: 12
         gender: 1
         physical_activity: 2
@@ -1925,8 +1908,6 @@ components:
         jobs:
           - title: "Software engineer"
             company: "Trik Trak"
-            start_date: 1565337124
-            end_date: 1565337124
             isMain: true
           - title: "Software intern"
             company: "Criteo"
@@ -2010,8 +1991,6 @@ components:
         height: 190
         age: 23
         distance: 2
-        max_age: 30
-        max_distance: 100
         bio: "Hi I'm John, 22 years old from NY"
         gender: 1
         physical_activity: 2
@@ -2181,8 +2160,6 @@ components:
           height: 190
           age: 23
           distance: 2
-          max_age: 30
-          max_distance: 100
           bio: "Hi I'm John, 22 years old from NY"
           gender: 1
           physical_activity: 2
