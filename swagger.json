@@ -390,25 +390,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                fields:
-                  type: object
-                  properties:
-                    age_filter_min:
-                      type: number
-                      description: Minimum age for user's suggestions
-                    age_filter_max:
-                      type: number
-                      description: Maximum age for user's suggestions
-                    distance_filter:
-                      type: number
-                      description: Maximum distance for user's suggestions
-                    gender_filter:
-                      type: number
-                      description: Gender filter for user's suggestions
-              required:
-              - fields
+              $ref: '#/components/schemas/FiltersType'
       responses:
         '200':    # status code
           description: Updated profile data
@@ -1948,13 +1930,11 @@ components:
             isMain: true
           - title: "Software intern"
             company: "Criteo"
-            start_date: 1565337124
-            end_date: 1565337124
             isMain: false
         studies:
           - title: "Engineer"
             institution: "ENSAM"
-            graduation_date: 1565337124
+            graduation_date: "2008-09-15T15:53:00"
             isMain: true
         lairs:
           - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
@@ -2065,12 +2045,10 @@ components:
         jobs:
           title: "Software engineer"
           company: "Trik Trak"
-          start_date: 1565337124
-          end_date: 1565337124
         studies:
           title: "Engineer"
           institution: "ENSAM"
-          graduation_date: 1565337124
+          graduation_date: "2008-09-15T15:53:00"
         lairs:
           - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
             name: "Burger King"
@@ -2094,11 +2072,11 @@ components:
         institution:
           type: string
         graduation_date:
-          type: integer
+          type: string
       example:
         title: "Engineer"
         institution: "ENSAM"
-        graduation_date: 1565337124
+        graduation_date: "2008-09-15T15:53:00"
     Job:
       description: User's job
       type: object
@@ -2107,15 +2085,9 @@ components:
           type: string
         company:
           type: string
-        start_date:
-          type: integer
-        last_date:
-          type: integer
       example:
         title: "Software engineer"
         company: "Trik Trak"
-        start_date: 1565337124
-        end_date: 1565337124
                 
     Lair:
       description: User's lair
@@ -2234,12 +2206,10 @@ components:
           jobs:
             title: "Software engineer"
             company: "Trik Trak"
-            start_date: 1565337124
-            end_date: 1565337124
           studies:
             title: "Engineer"
             institution: "ENSAM"
-            graduation_date: 1565337124
+            graduation_date: "2008-09-15T15:53:00"
           lairs:
             - id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
               name: "Burger King"
