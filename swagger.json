@@ -400,6 +400,8 @@ paths:
                 $ref: '#/components/schemas/Profile'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
     delete:
       summary: Delete my profile
       tags:
@@ -553,6 +555,20 @@ paths:
         required: true
         schema:
           $ref: '#/components/headers/OsVersion'
+      - in: query
+        name: position
+        schema:
+          type: integer
+        description: The position of the uploaded picture
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                picture:
+                  type: string
+                  format: binary
       responses:
         '200':    # status code
           description: Return the new picture
@@ -562,6 +578,8 @@ paths:
                 $ref: '#/components/schemas/Picture'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
     delete:
       summary: Delete a picture
       tags:
@@ -607,15 +625,13 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                pictures:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
+              type: array
+              items:
+                type: string
+            example:
+              - "507f1f77bcf86cd799439011"
+              - "507f1f77bcf86cd799439102"
+              - "507f1f77bcf86cd799432451"
       responses:
         '200':    # status code
           description: Return user pictures
@@ -627,6 +643,8 @@ paths:
                   $ref: '#/components/schemas/Picture'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/details:
     put:
       summary: Update user
@@ -731,6 +749,8 @@ paths:
           description: Return user
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/notifications:
     put:
       summary: Update user notification
@@ -771,6 +791,8 @@ paths:
           description: Return user
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/jobs:
     put:
       summary: Set and update user jobs
@@ -802,6 +824,8 @@ paths:
           description: User's jobs updated
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/studies:
     put:
       summary: Set and update user studies
@@ -833,6 +857,8 @@ paths:
           description: User studies updated
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/meta:
     post:
       summary: Get my meta data
@@ -893,6 +919,8 @@ paths:
                   $ref: '#/components/schemas/Lair'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/BadParametersError'
   /profile/lairs/autocomplete/{query}:
     get:
       summary: Autocomplete lairs, query is cached
@@ -1761,6 +1789,8 @@ components:
       description: Resource not found
     BadRequest:
       description: Bad request
+    BadParametersError:
+      description: Unprocessable entity
     UnauthorizedAccess:
       description: User cannot access this resource
     TooManyRequests:
@@ -1885,8 +1915,9 @@ components:
         political_affiliation: 1
         locale: "fr"
         pictures:
-          - source: "http://images.triktrak.co/d0aads-sfea.jpg"
-            name: "d0aads-sfea.jpg"
+          - id: "507f1f77bcf86cd799439011"
+            source: "http://images.triktrak.co/d0aads-sfea.jpg"
+            expired_at: "2008-09-15T15:53:00"
             isMain: true
             derivatives:
               - height: 40
@@ -1895,8 +1926,9 @@ components:
               - height: 80
                 width: 80
                 url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
-          - source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
-            name: "sdq00dsqsdq-ccxcaa.jpg"
+          - id: "507f1f77bcf86cd799439011"
+            source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+            expired_at: "2008-09-15T15:53:00"
             isMain: false
             derivatives:
               - height: 40
@@ -2001,8 +2033,9 @@ components:
         religion: 1
         political_affiliation: 1
         pictures:
-          - source: "http://images.triktrak.co/d0aads-sfea.jpg"
-            name: "d0aads-sfea.jpg"
+          - id: "507f1f77bcf86cd799439011"
+            source: "http://images.triktrak.co/d0aads-sfea.jpg"
+            expired_at: "2008-09-15T15:53:00"
             isMain: true
             derivatives:
               - height: 40
@@ -2011,8 +2044,9 @@ components:
               - height: 80
                 width: 80
                 url: "http://images.triktrak.co/80x80_d0aads-sfea.jpg"
-          - source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
-            name: "sdq00dsqsdq-ccxcaa.jpg"
+          - id: "507f1f77bcf86cd799439011"
+            source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
+            expired_at: "2008-09-15T15:53:00"
             isMain: false
             derivatives:
               - height: 40
@@ -2033,7 +2067,6 @@ components:
             name: "Burger King"
             picture: 
               source: "http://images.triktrak.co/sdq00dsqsdq-ccxcaa.jpg"
-              name: "sdq00dsqsdq-ccxcaa.jpg"
               derivatives:
                 - height: 40
                   width: 40
@@ -2102,9 +2135,11 @@ components:
       description: An image resource
       type: object
       properties:
-        source:
+        id:
           type: string
-        name:
+        expired_at:
+          type: string
+        source:
           type: string
         derivatives:
           type: array
@@ -2118,8 +2153,9 @@ components:
               url:
                 type: string
       example:
+        id: "507f1f77bcf86cd799439011"
         source: "http://images.triktrak.co/d0aads-sfea.jpg"
-        name: "d0aads-sfea.jpg"
+        expired_at: "2008-09-15T15:53:00"
         derivatives:
             - height: 40
               width: 40
