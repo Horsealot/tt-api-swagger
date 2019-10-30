@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: TrikTrak API
   description: API Draft for TrikTrak
-  version: 0.0.1
+  version: 0.2.0
 paths:
   /auth:
     post:
@@ -188,7 +188,7 @@ paths:
     get:
       summary: Get session status
       tags:
-      - Global
+      - Session
       parameters:
       - in: header
         name: client-version
@@ -1159,11 +1159,11 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
-  /suggestions:
+  /session/suggestions:
     get:
       summary: Get user suggestions
       tags:
-      - Macaroons
+      - Session
       security:
       - bearerAuth: []
       parameters:
@@ -1183,12 +1183,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  suggestions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -2117,18 +2114,18 @@ components:
       description: Session status
       type: object
       properties:
-        expectingPreviousSelection:
+        previous_selection_completed:
           description: "True if the user must do his previous selection"
           type: boolean
-        inProgress:
+        in_progress:
           type: boolean
         start_date:
           type: integer
         end_date:
           type: integer
       example:
-        expectingPreviousSelection: false
-        inProgress: true
+        previous_selection_completed: false
+        in_progress: true
         start_date: 1565337124
         end_date: 1565337124
     Picture:
