@@ -240,10 +240,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  favorites:
+                  connections:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Favorite'
+                      $ref: '#/components/schemas/Connection'
                   expired:
                     type: array
                     items:
@@ -2261,40 +2261,38 @@ components:
       properties:
         id:
           type: string
-        created_at:
+        sent_at:
           type: string
-        favorite:
+        sender:
           type: string
-        timestamp:
-          type: integer
         type:
           $ref: '#/components/schemas/MessageType'
         message:
           type: string
-        from:
-          type: string
-        to:
-          type: string
+        content:
+          type: object
+          properties:
+            payload:
+              type: object
         attachment:
           type: string
         game:
           $ref: '#/components/schemas/ShuffleGame'
       example:
-        id: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
-        created_at: "2019-01-01T08:00:00.000Z"
-        timestamp: 1565337124
-        favorite: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
-        type: 1
-        message: "John sent you a macaroon"
-        from: "339ed2e3-70cf-4a81-8db8-e95a9251155d"
-        to: "e95a9251155d-8db8-70cf-4a81-339ed2e3"
+        id: "5db2a7df593f1f155df4cab1"
+        sent_at: "2019-01-01T08:00:00.000Z"
+        type: 2
+        message: "Hello all !"
+        content:
+          payload:
+        sender: "5dcc148adf9d0f03654a465a"
     MessageType:
       type: integer
       enum: [1, 2, 3, 4]
       description: > 
         type: 
-          * `1` - Notification
-          * `2` - Text
+          * `1` - Message
+          * `2` - Notification
           * `3` - Game
           * `4` - Attachment
     ShuffleGame:
@@ -2341,6 +2339,27 @@ components:
           * `2` - Open question
           * `3` - 2-choices
           * `4` - n-choices
+    Connection:
+      type: object
+      properties:
+        id:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        status:
+          type: integer
+        created_at:
+          type: integer
+        last_active_at:
+          type: integer
+        unread_messages:
+          type: integer
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
     Favorite:
       type: object
       properties:
