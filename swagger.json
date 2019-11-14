@@ -1263,6 +1263,10 @@ paths:
       responses:
         '200':    # status code
           description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
