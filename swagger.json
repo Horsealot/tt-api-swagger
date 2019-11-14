@@ -1267,6 +1267,50 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
+  /conversations/{id}/pages:
+    get:
+      summary: Get conversation older messages
+      tags:
+      - Messenger
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: header
+        name: client-version
+        required: true
+        schema:
+          $ref: '#/components/headers/ClientVersion'
+      - in: header
+        name: os-version
+        required: true
+        schema:
+          $ref: '#/components/headers/OsVersion'
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the conversation
+      - in: query
+        name: last_id
+        required: true
+        schema:
+          type: string
+        description: Last message id
+        example: "5dcc148adf9d0f03654a465c"
+      responses:
+        '200':    # status code
+          description: Conversation's messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedAccess'
   /conversations/{id}/games:
     get:
       summary: Get a shuffle game
