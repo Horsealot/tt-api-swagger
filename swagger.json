@@ -1376,41 +1376,26 @@ paths:
       responses:
         '200':    # status code
           description: Shuffle game created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                id: 5dd4169e16c06935005ea366
+                sent_at: '2019-11-19T16:21:50.367Z'
+                sender: 5d83431020e57635c3aeb52e
+                type: 3
+                content:
+                  game_id: 5dd2680beacc9f51864136c8
+                  data: Why does the North just get to stay independent?
+                  answers: []
+                  answered_by: []
+              
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/UnauthorizedAccess'
-    delete:
-      summary: Refuse the proposed shuffle game
-      tags:
-      - Messenger
-      security:
-      - bearerAuth: []
-      parameters:
-      - in: header
-        name: client-version
-        required: true
-        schema:
-          $ref: '#/components/headers/ClientVersion'
-      - in: header
-        name: os-version
-        required: true
-        schema:
-          $ref: '#/components/headers/OsVersion'
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: ID of the conversation
-      responses:
-        '200':    # status code
-          description: Shuffle game refused
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/UnauthorizedAccess'
-  /connections/{id}/games/{gameId}:
+  /connections/{id}/games/{messageId}:
     post:
       summary: Answer a game
       tags:
@@ -1435,14 +1420,40 @@ paths:
         required: true
         description: ID of the conversation
       - in: path
-        name: gameId
+        name: messageId
         schema:
           type: string
         required: true
-        description: ID of the game
+        description: ID of the message of the game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: integer
+                  description: Rating value if the game is a rating
+                answer:
+                  type: string
+                  description: Answer if the game is an open question or a choice
       responses:
         '200':    # status code
-          description: Game answered
+          description: The answer message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example: 
+                id: "5dd51dbe0e441d3c661b7d81"
+                sent_at: "2019-11-20T11:04:30.257Z"
+                sender: "5d83431020e57635c3aeb52e"
+                type: 4
+                content:
+                  game_id: "5dd2680beacc9f51864136c8"
+                  game_title: "Why does the North just get to stay independent?"
+                  data: 1
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -2317,9 +2328,6 @@ components:
           type: string
         content:
           type: object
-          properties:
-            payload:
-              type: object
         attachment:
           type: string
         game:
